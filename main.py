@@ -120,12 +120,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train detector')
     parser.add_argument('-c', dest='config', default=u'config.json', help='path to config file')
     parser.add_argument('-i', dest='input', default=u'input.lvm', help='path to lvm file or directory')
-    parser.add_argument('-o', dest='output', default=u'output', help='output directory')
     parser.add_argument('-j', dest='n_proc', default=1, type=int, help='number of processes')
-    parser.add_argument('-l', dest='save_lab', default=False, action='store_true', help='create lab file')
-    parser.add_argument('-ly', dest='save_lab_force', default=False, action='store_true',
-                        help='overwrite existing lab file')
-    parser.add_argument('--lab-ext', dest='lab_ext', default=u'lab', help='lab extension')
     parser.add_argument('--plot', dest='plot', default=False, action='store_true', help='plot results')
 
     arguments = parser.parse_args()
