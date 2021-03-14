@@ -1,0 +1,10 @@
+{
+  "channel" : 16,
+  "n_fft" : 2048,
+  "win_length" : 2048,
+  "hop_length" : 1024,
+  "win_type": "hann",
+  "threshold" : 10,
+  "min_duration": 4000,
+  "n_proc": 4
+}
