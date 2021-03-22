@@ -41,7 +41,7 @@ def task(lvm_file, params):
 
     # compute train mask for frames
     mask = np.array(energy > threshold, dtype=np.int)
-    diff = mask[0:-1] - mask[1:]  # make difference
+    diff = mask[0:-1] ^ mask[1:]  # make difference
     changes = np.where(diff != 0)[0]  # search for changes
     changes = np.append(changes, len(mask) - 1)  # add the last sample
 
@@ -57,16 +57,16 @@ def task(lvm_file, params):
 
     # compute train mask for signal
     signal_mask = np.zeros_like(signal, dtype=np.int)
-    diff = mask[0:-1] - mask[1:]  # make difference
+    diff = mask[0:-1] ^ mask[1:]  # make difference
     changes = np.where(diff != 0)[0]  # search for changes
     changes = np.append(changes, len(mask) - 1)  # add the last sample
     start_index = 0
     for index in changes:
         end_index = index + 1
         if mask[start_index] == 1:
-            start, end = librosa.frames_to_samples([start_index, end_index],
-                                                   hop_length=hop_length,
-                                                   n_fft=n_fft)
+            # expand signal for one frame left and right
+            start, end = librosa.frames_to_samples([start_index-1, end_index+1],
+                                                   hop_length=hop_length)
             signal_mask[start:end] = 1
         start_index = end_index
 
@@ -105,14 +105,20 @@ def main(args):
 
     if args.plot:
         for k, v in dict_results.items():
-            fig, ax = plt.subplots(2, 1, figsize=(10, 10), sharex='col')
+            fig, ax = plt.subplots(2, 2, figsize=(15, 10), sharex='col')
             fig.suptitle(k)
-            ax[0].set_title('signal')
-            ax[0].set_xlabel('samples')
-            ax[0].plot(v['signal'])
-            ax[1].set_title('signal mask')
-            ax[1].set_xlabel('samples')
-            ax[1].plot(v['signal_mask'])
+            ax[0][0].set_title('signal')
+            ax[0][0].set_xlabel('samples')
+            ax[0][0].plot(v['signal'])
+            ax[1][0].set_title('signal mask')
+            ax[1][0].set_xlabel('samples')
+            ax[1][0].plot(v['signal_mask'])
+            ax[0][1].set_title('energy')
+            ax[0][1].set_xlabel('frames')
+            ax[0][1].plot(v['energy'])
+            ax[1][1].set_title('mask')
+            ax[1][1].set_xlabel('frames')
+            ax[1][1].plot(v['mask'])
             plt.show()
 
 
